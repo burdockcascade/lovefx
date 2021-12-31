@@ -3,6 +3,8 @@ local Timer = Node:extend()
 
 function Timer:new(params)
 
+    params = params or {}
+
     self.counter = 0.0
     self.timeout = params.timeout or 1
     self.cb = params.cb
@@ -18,6 +20,14 @@ function Timer:onUpdate(dt)
         if self.cb ~= nil then self.cb() end
     end
 
+end
+
+function Timer:setTimeoutHandler(cb)
+    self.cb = cb
+end
+
+function Timer:setTimeout(timeout)
+    self.timeout = timeout
 end
 
 return Timer
