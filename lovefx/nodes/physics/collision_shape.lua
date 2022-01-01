@@ -1,21 +1,20 @@
 local Node = require 'lovefx.node'
+local Color = require 'lovefx.util.color'
 local CollisionShape = Node:extend()
 
-function CollisionShape:new(params)
-    
-    params = params or {}
-    
-    self.shapeType = params.shapeType or 'rectangle'
-    self.shapeRadius = params.shapeRadius or 1
-    self.shapeWidth = params.shapeWidth or 1
-    self.shapeHeight = params.shapeHeight or 1
-    self.shapeX = params.shapeX or 1
-    self.shapeY = params.shapeY or 1
+CollisionShape.RECTANGLE = 'rectangle'
+CollisionShape.CIRCLE = 'circle'
 
-    self.density = params.density or 1
-    self.restitution = params.restitution or nill
+function CollisionShape:new(options)
+    
+    options = options or {}
+    
+    self.shapeType = options.shapeType or self.RECTANGLE
+    self.shapeRadius = options.shapeRadius or 1
+    self.density = options.density or 1
+    self.restitution = options.restitution or nill
 
-    CollisionShape.super.new(self, params)
+    CollisionShape.super.new(self, options)
 end
 
 function CollisionShape:onLoad()
@@ -25,11 +24,11 @@ function CollisionShape:onLoad()
     else
         error("not child of physics world")
     end
-    
+
     -- make shape
-    if self.shapeType == 'rectangle' then
-        self.shape = love.physics.newRectangleShape(0, 0, self.shapeWidth, self.shapeHeight)
-    elseif self.shapeType == 'circle' then
+    if self.shapeType == self.RECTANGLE then
+        self.shape = love.physics.newRectangleShape(0, 0, self.w, self.h)
+    elseif self.shapeType == self.CIRCLE then
         self.shape = love.physics.newCircleShape(self.shapeRadius)
     else
         error("unknown collision shape")
@@ -40,21 +39,9 @@ function CollisionShape:onLoad()
 
     -- let it bounce
     if self.restitution ~= nil then
-        self.fixture:setRestitutions(self.restitution) 
+        self.fixture:setRestitution(self.restitution) 
     end
   
-end
-
-function CollisionShape:onDraw()
-
-    if self.shapeType == 'rectangle' then
-        love.graphics.setColor(0.20, 0.20, 0.20)
-        love.graphics.polygon("fill", self.physicsBody:getWorldPoints(self.shape:getPoints()))
-    elseif self.shapeType == 'circle' then
-        love.graphics.setColor(0.76, 0.18, 0.05)
-        love.graphics.circle("fill", self.physicsBody:getX(), self.physicsBody:getY(), self.shape:getRadius())
-    end
-
 end
 
 return CollisionShape

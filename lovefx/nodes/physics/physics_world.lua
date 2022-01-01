@@ -1,15 +1,15 @@
 local Node = require 'lovefx.node'
 local PhysicsWorld = Node:extend()
 
-function PhysicsWorld:new(params)
+function PhysicsWorld:new(options)
 
-    params = params or {}
+    options = options or {}
 
-    self.gx = params.gx or 0
-    self.gy = params.gy or 0
-    self.can_sleep = params.can_sleep or true
+    self.gx = options.gx or 0
+    self.gy = options.gy or 0
+    self.can_sleep = options.can_sleep or true
 
-    PhysicsWorld.super.new(self, params)
+    PhysicsWorld.super.new(self, options)
 end
 
 function PhysicsWorld:onLoad()

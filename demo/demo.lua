@@ -1,14 +1,13 @@
-local App = require 'lovefx.app'
-local MyApp = App:extend()
+local Scene = require 'lovefx.scene'
 
-local Label = require 'lovefx.widgets.gui.label'
-local Button = require 'lovefx.widgets.gui.button'
-local Sprite = require 'lovefx.widgets.gui.image'
-local DebugOverlay = require 'lovefx.widgets.debug_overlay'
+
+local Label = require 'lovefx.nodes.ui.label'
+local Button = require 'lovefx.nodes.ui.button'
+local Sprite = require 'lovefx.nodes.graphics.sprite'
 local Color = require 'lovefx.util.color'
 local Scene = require 'lovefx.scene'
-local Timer = require 'lovefx.widgets.extra.timer'
-local Rect = require 'lovefx.widgets.gui.rect'
+local Timer = require 'lovefx.nodes.timer'
+local Rect = require 'lovefx.nodes.graphics.rectangle'
 
 local cache = {
     whale = love.graphics.newImage("demo/assets/love2dwhale.png", {}),
@@ -16,26 +15,33 @@ local cache = {
     playfair_font = love.graphics.newFont('demo/assets/PlayfairDisplay-Regular.ttf', 22)
 }
 
-function MyApp:onLoad()
+local app = MyApp()
+
+function App:new()
+    
+    self.scene = Scene(320, 480)
 
     -- local button = Button({x = 150, y = 150, text = "Button"})
     -- self:addChild(button)
 
+    local title2 = Label({x = self.w/2, y = 10, font = cache.bombing_font, text = "I AM TEXT"})
+    scene:addChild(title2)
+
     -- whales
     for i = 10,1,-1 do 
-        -- self:add_whale_img()
+        scene:add_whale_img()
     end
 
     -- hello world
     for i = 2,1,-1 do 
-        self:add_hello_world()
+        scene:add_hello_world()
     end    
 
     --
-    -- self:add_whale_count()
+    scene:add_whale_count()
 
-    local rect = Rect({x = 60, y = 60, w = 70, h = 70, color = Color.blue})
-    self:addChild(rect)
+    local rect = Rect({x = 60, y = 60, w = 70, h = 20, color = Color.Blue, mode = 'fill'})
+    scene:addChild(rect)
 
 end
 
@@ -55,12 +61,12 @@ function MyApp:add_whale_count()
 
     local counter = 0
 
-    local timer = Timer({timeout = 0})
+    local timer = Timer({timeout = 1})
 
     timer:setTimeoutHandler(function()
         counter = counter + 1
         title2:setText("whale burps " .. tostring(counter))
-        title2.r = title2.r + 0.1
+        title2:setRotation(title2.r + 0.1)
     end)
 
     self:addChild(timer)
@@ -78,12 +84,23 @@ function MyApp:add_whale_img()
     self:addChild(sprite)
 
     local timer2 = Timer()
-    timer2:setTimeout(0)
+    timer2:setTimeout(1)
     timer2:setTimeoutHandler(function()
-        sprite.r = sprite.r + 0.1
+        -- sprite:setPosition(sprite.x + 1, sprite.y + 1)
+        sprite:setRotation(sprite.r + 0.1)
     end)
     self:addChild(timer2)
 
 end
 
-MyApp():run()
+function love.load()
+    app:load()
+end
+
+function love.update(dt)
+    app:update(dt)
+end
+
+function love.draw()
+    app:draw()
+end

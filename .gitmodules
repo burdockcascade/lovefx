@@ -1,3 +1,6 @@
 [submodule "lovefx/thirdparty/classic"]
 	path = lovefx/thirdparty/classic
 	url = https://github.com/rxi/classic.git
+[submodule "lovefx/thirdparty/flux"]
+	path = lovefx/thirdparty/flux
+	url = https://github.com/rxi/flux.git

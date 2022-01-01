@@ -2,16 +2,16 @@ local Color = require 'lovefx.util.color'
 local Node = require 'lovefx.node'
 local Label = Node:extend()
 
-function Label:new(params)
-    self.textString = params.text
-    self.color = params.color or Color.white
-    self.font = params.font or love.graphics.newFont(16)
+function Label:new(options)
+    self.textString = options.text
+    self.color = options.color or Color.white
+    self.font = options.font or love.graphics.newFont(16)
     self.text = love.graphics.newText(self.font, self.textString)
 
-    params.w = self.text:getWidth()
-    params.h = self.text:getHeight()
+    options.w = self.text:getWidth()
+    options.h = self.text:getHeight()
 
-    Label.super.new(self, params)
+    Label.super.new(self, options)
 end
 
 function Label:getString()
