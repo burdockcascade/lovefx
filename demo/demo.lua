@@ -1,13 +1,5 @@
-local Scene = require 'lovefx.scene'
+require('lovefx.lovefx')
 
-
-local Label = require 'lovefx.nodes.ui.label'
-local Button = require 'lovefx.nodes.ui.button'
-local Sprite = require 'lovefx.nodes.graphics.sprite'
-local Color = require 'lovefx.util.color'
-local Scene = require 'lovefx.scene'
-local Timer = require 'lovefx.nodes.timer'
-local Rect = require 'lovefx.nodes.graphics.rectangle'
 
 local cache = {
     whale = love.graphics.newImage("demo/assets/love2dwhale.png", {}),
@@ -82,6 +74,7 @@ function MyApp:add_whale_img()
 
     local sprite = Sprite({x = x, y = y, src = cache.whale})
     self:addChild(sprite)
+
 
     local timer2 = Timer()
     timer2:setTimeout(1)

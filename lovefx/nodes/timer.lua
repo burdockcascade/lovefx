@@ -1,4 +1,4 @@
-local Node = require 'lovefx.node'
+local Node = require('lovefx.node')
 local Timer = Node:extend()
 
 function Timer:new(params)

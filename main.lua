@@ -1,1 +1,1 @@
-require 'demo.game'
+require 'demo.physics'

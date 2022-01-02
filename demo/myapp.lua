@@ -1,4 +1,4 @@
-local App = require 'lovefx.app'
+require('lovefx.lovefx')
 local MyApp = App:extend()
 
 local Frame = require 'lovefx.widgets.gui.frame'

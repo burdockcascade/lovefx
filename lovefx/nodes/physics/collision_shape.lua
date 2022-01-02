@@ -10,7 +10,7 @@ function CollisionShape:new(options)
     options = options or {}
     
     self.shapeType = options.shapeType or self.RECTANGLE
-    self.shapeRadius = options.shapeRadius or 1
+    self.radius = options.radius or 1
     self.density = options.density or 1
     self.restitution = options.restitution or nill
 
@@ -29,7 +29,7 @@ function CollisionShape:onLoad()
     if self.shapeType == self.RECTANGLE then
         self.shape = love.physics.newRectangleShape(0, 0, self.w, self.h)
     elseif self.shapeType == self.CIRCLE then
-        self.shape = love.physics.newCircleShape(self.shapeRadius)
+        self.shape = love.physics.newCircleShape(self.radius)
     else
         error("unknown collision shape")
     end
