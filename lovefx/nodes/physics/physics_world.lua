@@ -1,4 +1,4 @@
-local Node = require 'lovefx.node'
+local Node = require 'lovefx.nodes.node'
 local PhysicsWorld = Node:extend()
 
 function PhysicsWorld:new(options)

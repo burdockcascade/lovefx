@@ -1,5 +1,5 @@
 local Color = require('lovefx.util.color')
-local Node = require('lovefx.node')
+local Node = require('lovefx.nodes.node')
 local Rectangle = Node:extend()
 
 function Rectangle:new(options)

@@ -1,4 +1,4 @@
-local Node = require 'lovefx.node'
+local Node = require 'lovefx.nodes.node'
 local Color = require 'lovefx.util.color'
 local CollisionShape = Node:extend()
 

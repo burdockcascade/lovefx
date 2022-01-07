@@ -1,4 +1,4 @@
-local Node = require('lovefx.node')
+local Node = require('lovefx.nodes.node')
 local Scene = Node:extend()
 
 function Scene:new(designWidth, designHeight, sizeMode)

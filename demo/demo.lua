@@ -1,4 +1,5 @@
-require('lovefx.lovefx')
+require('lovefx.engine')
+local MyApp = Scene:extend()
 
 
 local cache = {
@@ -9,31 +10,36 @@ local cache = {
 
 local app = MyApp()
 
-function App:new()
-    
-    self.scene = Scene(320, 480)
+function MyApp:new()
 
     -- local button = Button({x = 150, y = 150, text = "Button"})
     -- self:addChild(button)
 
+end
+
+function MyApp:onLoad()
+
     local title2 = Label({x = self.w/2, y = 10, font = cache.bombing_font, text = "I AM TEXT"})
-    scene:addChild(title2)
+    self:addChild(title2)
+
+    local group = Group()
+    self:addChild(group)
 
     -- whales
     for i = 10,1,-1 do 
-        scene:add_whale_img()
+        group:addChild(self:add_whale_img())
     end
 
     -- hello world
     for i = 2,1,-1 do 
-        scene:add_hello_world()
+        self:add_hello_world()
     end    
 
     --
-    scene:add_whale_count()
+    self:add_whale_count()
 
-    local rect = Rect({x = 60, y = 60, w = 70, h = 20, color = Color.Blue, mode = 'fill'})
-    scene:addChild(rect)
+    local rect = Rectangle({x = 60, y = 60, w = 70, h = 20, color = Color.Blue, mode = 'fill'})
+    self:addChild(rect)
 
 end
 
@@ -55,7 +61,7 @@ function MyApp:add_whale_count()
 
     local timer = Timer({timeout = 1})
 
-    timer:setTimeoutHandler(function()
+    timer:onSignal('timeout', function()
         counter = counter + 1
         title2:setText("whale burps " .. tostring(counter))
         title2:setRotation(title2.r + 0.1)
@@ -72,17 +78,16 @@ function MyApp:add_whale_img()
     local x = love.math.random(0, 480)
     local y = love.math.random(0, 320)
 
-    local sprite = Sprite({x = x, y = y, src = cache.whale})
-    self:addChild(sprite)
+    local sprite = Image({x = x, y = y, src = cache.whale})
 
-
-    local timer2 = Timer()
-    timer2:setTimeout(1)
-    timer2:setTimeoutHandler(function()
-        -- sprite:setPosition(sprite.x + 1, sprite.y + 1)
+    local timer2 = Timer({timeout = 1000})
+    timer2:onSignal('timeout', function()
+        sprite:setPosition(sprite.x + 1, sprite.y + 1)
         sprite:setRotation(sprite.r + 0.1)
     end)
-    self:addChild(timer2)
+    sprite:addChild(timer2)
+
+    return sprite
 
 end
 

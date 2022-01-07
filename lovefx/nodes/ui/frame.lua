@@ -1,5 +1,5 @@
 local Color = require 'lovefx.util.color'
-local Node = require 'lovefx.node'
+local Node = require 'lovefx.nodes.node'
 local Frame = Node:extend()
 
 function Frame:new(params)

@@ -1,16 +1,23 @@
-Node = require('lovefx.node')
-Scene = require('lovefx.scene')
+Node = require('lovefx.nodes.node')
+Scene = require('lovefx.nodes.scene')
+Group = require('lovefx.nodes.group')
 
-Camera = require('lovefx.camera')
+Camera = require('lovefx.nodes.camera')
+Debug = require('lovefx.nodes.debug')
+Timer = require('lovefx.nodes.timer')
 
 -- physics
 PhysicsWorld = require('lovefx.nodes.physics.physics_world')
 PhysicsBody = require('lovefx.nodes.physics.physics_body')
 CollisionShape = require('lovefx.nodes.physics.collision_shape')
-Sprite = require('lovefx.nodes.graphics.sprite')
+Image = require('lovefx.nodes.graphics.image')
 
 -- ui
 Label = require('lovefx.nodes.ui.label')
+Button = require('lovefx.nodes.ui.button')
+Container = require('lovefx.nodes.ui.containers.container')
+HBox = require('lovefx.nodes.ui.containers.hbox')
+VBox = require('lovefx.nodes.ui.containers.vbox')
 
 -- util
 Color = require('lovefx.util.color')

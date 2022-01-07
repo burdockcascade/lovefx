@@ -1,15 +1,14 @@
-local Node = require('lovefx.node')
+local Node = require('lovefx.nodes.node')
 local Timer = Node:extend()
 
-function Timer:new(params)
+function Timer:new(options)
 
-    params = params or {}
+    options = options or {}
 
     self.counter = 0.0
-    self.timeout = params.timeout or 1
-    self.cb = params.cb
+    self.timeout = options.timeout or 1
 
-    Timer.super.new(self, params)
+    Timer.super.new(self, options)
 end
 
 function Timer:onUpdate(dt)
@@ -17,13 +16,9 @@ function Timer:onUpdate(dt)
 
     if self.counter >= self.timeout then
         self.counter = 0
-        if self.cb ~= nil then self.cb() end
+        self:fireSignal("timeout", self.counter)
     end
 
-end
-
-function Timer:setTimeoutHandler(cb)
-    self.cb = cb
 end
 
 function Timer:setTimeout(timeout)

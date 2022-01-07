@@ -31,8 +31,7 @@ function MyGame:onLoad()
     self.scene:addChild(timer)
 
     timer:onSignal('timeout', function()
-        local mx, my = love.mouse.getX() * cam.sx, love.mouse.getY() * cam.sy
-        cam:setPosition(mx, my)
+        self.scene:setPosition(self.scene.x, self.scene.y + 1)
     end)    
 
     local title = Label({x = 230, y = 10, font = Resources['bombing_font'], text = "Physics Demo"})
