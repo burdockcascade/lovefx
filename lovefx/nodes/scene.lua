@@ -29,7 +29,7 @@ function Scene:new(designWidth, designHeight, sizeMode)
     --     scaleFactor = sh
     --     w = h * screenWidth / screenHeight
     -- end
-    Scene.super:new({})
+    Scene.super:new(self)
     -- self:updateScale(scaleFactor, scaleFactor)
 end
 

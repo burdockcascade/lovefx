@@ -6,6 +6,8 @@ Camera = require('lovefx.nodes.camera')
 Debug = require('lovefx.nodes.debug')
 Timer = require('lovefx.nodes.timer')
 
+Tilemap = require('lovefx.nodes.tilemap.tilemap')
+
 -- physics
 PhysicsWorld = require('lovefx.nodes.physics.physics_world')
 PhysicsBody = require('lovefx.nodes.physics.physics_body')
@@ -21,6 +23,7 @@ VBox = require('lovefx.nodes.ui.containers.vbox')
 
 -- util
 Color = require('lovefx.util.color')
+Spritesheet = require('lovefx.util.spritesheet')
 
 -- shapes
 Rectangle = require('lovefx.nodes.graphics.rectangle')

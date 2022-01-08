@@ -12,11 +12,15 @@ function Frame:new(params)
 end
 
 function Frame:onDraw()
+
+    -- box
     love.graphics.setColor(Color.Silver)
     love.graphics.rectangle("line", self.x, self.y, self.w, self.h, self.rx, self.ry, self.segments)
 
+    -- border
     love.graphics.setColor(Color.White)
     love.graphics.rectangle("fill", self.x + 1, self.y + 1, self.w - 2, self.h - 2, self.rx, self.ry, self.segments)
+    
 end
 
 return Frame
