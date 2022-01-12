@@ -1,10 +1,9 @@
-local Color = require 'lovefx.util.color'
 local Node = require 'lovefx.nodes.node'
 local Label = Node:extend()
 
 function Label:new(options)
     self.textString = options.text
-    self.color = options.color or Color.white
+    self.color = options.color or Color("White")
     self.font = options.font or love.graphics.newFont(16)
     self.text = love.graphics.newText(self.font, self.textString)
 
@@ -29,7 +28,7 @@ end
 
 function Label:onDraw()
     local color = self.color
-    love.graphics.setColor(color[1], color[2], color[3], color[4])
+    love.graphics.setColor(self.color)
     love.graphics.draw(self.text, self.x, self.y, self.r, self.sx, self.sy, self.ox, self.oy)
 end
 

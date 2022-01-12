@@ -15,7 +15,7 @@ function Rectangle:onDraw()
     love.graphics.setColor(self.color)
     local x0, y0 = self:getLeftTop()
     love.graphics.rectangle(self.mode, x0, y0, self.w, self.h, self.rx, self.ry, self.segments)
-    love.graphics.setColor({255, 255, 255, 255})
+    love.graphics.setColor(Color("White"))
 end
 
 return Rectangle

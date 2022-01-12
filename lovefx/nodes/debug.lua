@@ -7,7 +7,7 @@ function Debug:new(options)
     self.graphics = options.graphics or false
     self.nodes = options.nodes or false
 
-    self.color = options.color or Color.White
+    self.color = options.color or Color("White")
 
     self.line = 0
     self.space = 20
@@ -51,7 +51,7 @@ function Debug:printLine(text)
 
     love.graphics.setColor(self.color)
     love.graphics.print(text, 10, self.line)
-    love.graphics.setColor(Color.White)
+    love.graphics.setColor(Color("White"))
     
 
 end

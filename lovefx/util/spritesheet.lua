@@ -15,8 +15,8 @@ function Spritesheet:new(args)
     Spritesheet.super.new(self)
 end
 
-function Spritesheet:getSprite(x, y)
-    return love.graphics.newQuad(self.tileW * x, self.tileH * y, self.tileW, self.tileH, self.image)
+function Spritesheet:getQuad(x, y)
+    return love.graphics.newQuad(self.tileW * (x-1), self.tileH * (y-1), self.tileW, self.tileH, self.image)
 end
 
 return Spritesheet

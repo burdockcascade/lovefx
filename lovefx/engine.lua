@@ -12,9 +12,15 @@ Tilemap = require('lovefx.nodes.tilemap.tilemap')
 PhysicsWorld = require('lovefx.nodes.physics.physics_world')
 PhysicsBody = require('lovefx.nodes.physics.physics_body')
 CollisionShape = require('lovefx.nodes.physics.collision_shape')
+
+-- graphics
 Image = require('lovefx.nodes.graphics.image')
+Sprite = require('lovefx.nodes.graphics.sprite')
+AnimatedSprite = require('lovefx.nodes.graphics.animated_sprite')
 
 -- ui
+Canvas = require('lovefx.nodes.ui.canvas')
+Frame = require('lovefx.nodes.ui.frame')
 Label = require('lovefx.nodes.ui.label')
 Button = require('lovefx.nodes.ui.button')
 Container = require('lovefx.nodes.ui.containers.container')
@@ -24,6 +30,7 @@ VBox = require('lovefx.nodes.ui.containers.vbox')
 -- util
 Color = require('lovefx.util.color')
 Spritesheet = require('lovefx.util.spritesheet')
+Math = require('lovefx.util.math')
 
 -- shapes
 Rectangle = require('lovefx.nodes.graphics.rectangle')

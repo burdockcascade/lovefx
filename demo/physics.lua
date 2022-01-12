@@ -6,6 +6,9 @@ function MyGame:new(options)
     self.scene = Node()
     self:addChild(self.scene)
 
+    self.canvas = Canvas()
+    self:addChild(self.canvas)
+
     MyGame.super.new(self, options)
 
 end
@@ -15,7 +18,7 @@ function MyGame:onLoad()
     -- love.graphics.setWireframe(true)
 
     --initial graphics setup
-    love.graphics.setBackgroundColor(Color.Blue) --set the background color to a nice blue
+    love.graphics.setBackgroundColor(Color("RoyalBlue")) --set the background color to a nice blue
     -- love.window.setMode(650, 650) --set the window dimensions to 650 by 650 with no fullscreen, vsync on, and no antialiasing
 
     Resources['whale'] = love.graphics.newImage("demo/assets/love2dwhale.png", {})
@@ -24,31 +27,25 @@ function MyGame:onLoad()
     Resources['audio'] = love.audio.newSource("demo/assets/foot3.ogg", "static")
 
     -- camera
-    local cam = Camera()
-    self.scene:addChild(cam)
+    self.cam = Camera()
+    self.scene:addChild(self.cam)
 
-    local timer = Timer({timeout = 0})
-    self.scene:addChild(timer)
-
-    timer:onSignal('timeout', function()
-        local mx, my = love.mouse.getX() * cam.sx, love.mouse.getY() * cam.sy
-        cam:setPosition(mx, my)
-    end)    
-
-    local title = Label({x = 230, y = 10, font = Resources['bombing_font'], text = "Physics Demo"})
-    self.scene:addChild(title)
+    -- step
+    self.cam_step = 5
+    self.cam_scale = 0.1
 
     -- world
     local pw = PhysicsWorld({gy = 500})
     self.scene:addChild(pw)
 
     -- block
-    pw:addChild(self:addWall(85, 500, 60, 10))
-    pw:addChild(self:addRoundy(240, 350, 15))
-    pw:addChild(self:addWall(570, 450, 15, 5))
+    pw:addChild(self:addWall(85, 500, 60, 60))
+    pw:addChild(self:addRoundy(340, 250, 15))
+    pw:addChild(self:addRoundy(640, 150, 5))
+    pw:addChild(self:addWall(570, 450, 20, 100))
 
     -- ball
-    for i = 10,1,-1 do 
+    for i = 20,1,-1 do 
 
         pw:addChild(self:addWhale(100, -250 * i, 0.3))
         pw:addChild(self:addWhale(300, -300 * i, 0.1))
@@ -60,7 +57,48 @@ function MyGame:onLoad()
     -- self.scene:addChild(player)
     -- player:play()
     
-    self.scene:addChild(Debug({graphics = true, nodes = true}))
+
+    -- UI
+
+    local title = Label({x = 230, y = 10, font = Resources['bombing_font'], text = "Physics Demo", color = Color("FireBrick")})
+    self.canvas:addChild(title)
+
+    local button1 = Button({x = 230, y = 40, text = "Exit", tip = "Exit the app"})
+    self.canvas:addChild(button1)
+
+    button1:onSignal("pressed", function()
+        love.event.quit()
+    end)    
+
+    self.canvas:addChild(Debug({graphics = true, nodes = true}))
+
+end
+
+function MyGame:onUpdate()
+
+    if love.keyboard.isDown("down") then
+        self.cam:translatePosition(0, -self.cam_step)
+    elseif love.keyboard.isDown("up") then
+        self.cam:translatePosition(0, self.cam_step)
+    end
+    
+    if love.keyboard.isDown("left") then
+        self.cam:translatePosition(self.cam_step, 0)  
+    elseif love.keyboard.isDown("right") then
+        self.cam:translatePosition(-self.cam_step, 0)
+    end
+
+    if love.keyboard.isDown("[") then
+        self.cam:translateScale(self.cam_scale, self.cam_scale)
+    elseif love.keyboard.isDown("]") then
+        self.cam:translateScale(-self.cam_scale, -self.cam_scale)
+    end
+
+    if love.keyboard.isDown(",") then
+        self.cam:translateRotation(0.1)
+    elseif love.keyboard.isDown(".") then
+        self.cam:translateRotation(-0.1)
+    end
 
 end
 
@@ -76,13 +114,13 @@ function MyGame:addWhale(x, y, restitution)
 
     whaleBody:addChild(sprite)
 
-    local title = Label({x = 50, y = 10, font = Resources['playfair_font'], text = "I am Whale"})
+    local title = Label({x = 50, y = 10, font = Resources['playfair_font'], text = "I am Whale", color = Color("Fuchsia")})
     whaleBody:addChild(title)
 
-    local rect = Rectangle({x = -10, w = 15, h = 15, mode = 'line'})
+    local rect = Rectangle({x = -10, w = 15, h = 15, mode = 'line', color = Color("SeaShell", 0.5)})
     whaleBody:addChild(rect)
 
-    local circ = Circle({x = -15, y = -15, radius = 20, mode = 'fill'})
+    local circ = Circle({x = -15, y = -15, radius = 20, mode = 'fill', color = Color("Peru")})
     whaleBody:addChild(circ)
 
     return whaleBody
@@ -96,7 +134,7 @@ function MyGame:addWall(x, y, w, h)
     local block1Shape = CollisionShape({w = w, h = h, shapeType = CollisionShape.RECTANGLE})
     block1Body:addChild(block1Shape)
 
-    local rect = Rectangle({w = w, h = h, mode = 'fill'})
+    local rect = Rectangle({w = w, h = h, mode = 'fill', color = Color("LawnGreen", 1)})
     block1Body:addChild(rect)
 
     return block1Body
@@ -111,7 +149,7 @@ function MyGame:addRoundy(x, y, r)
     local block1Shape = CollisionShape({radius = r, shapeType = CollisionShape.CIRCLE})
     block1Body:addChild(block1Shape)
 
-    local circ = Circle({radius = r, mode = 'fill'})
+    local circ = Circle({radius = r, mode = 'fill', color = Color("Yellow")})
     block1Body:addChild(circ)
 
     return block1Body

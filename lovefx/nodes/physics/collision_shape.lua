@@ -1,5 +1,4 @@
 local Node = require 'lovefx.nodes.node'
-local Color = require 'lovefx.util.color'
 local CollisionShape = Node:extend()
 
 CollisionShape.RECTANGLE = 'rectangle'

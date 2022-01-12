@@ -21,18 +21,6 @@ function MyGame:onLoad()
     Resources['whale'] = love.graphics.newImage("demo/assets/love2dwhale.png", {})
     Resources['bombing_font'] = love.graphics.newFont('demo/assets/Bombing.ttf', 52)
     Resources['playfair_font'] = love.graphics.newFont('demo/assets/PlayfairDisplay-Regular.ttf', 22)
-    Resources['audio'] = love.audio.newSource("demo/assets/foot3.ogg", "static")
-
-    -- camera
-    local cam = Camera()
-    self.scene:addChild(cam)
-
-    local timer = Timer({timeout = 0})
-    self.scene:addChild(timer)
-
-    timer:onSignal('timeout', function()
-        self.scene:setPosition(self.scene.x, self.scene.y + 1)
-    end)    
 
     local title = Label({x = 230, y = 10, font = Resources['bombing_font'], text = "Physics Demo"})
     self.scene:addChild(title)
@@ -54,10 +42,6 @@ function MyGame:onLoad()
         pw:addChild(self:addWhale(500, -400 * i, 0.8))
 
     end
-
-    -- local player = AudioPlayer({source = Resources['audio']})
-    -- self.scene:addChild(player)
-    -- player:play()
     
     self.scene:addChild(Debug({graphics = true, nodes = true}))
 

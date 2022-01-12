@@ -13,24 +13,30 @@ function Node:new(options)
     self.name = options.name or ""
     self.description = options.description or ""
 
+    -- root of node tree
+    self.root = nil
+    self.parent = nil
+
     -- position
     self.x = options.x or 0
     self.y = options.y or 0
 
     -- rad
-    self.r = options.r or 0
+    self.rotation = options.rotation or 0
+
+    -- anchor (defauly center)
+    self.anchorX = options.anchorX or 0.5
+    self.anchorY = options.anchorY or 0.5
+    -- self.anchorRight = options.anchorRight or 0.5
+    -- self.anchorBottom = options.anchorBottom or 0.5
 
     -- size
     self.w = options.w or 0
     self.h = options.h or 0
 
     -- scale
-    self.sx = options.sx or 1
-    self.sy = options.sy or 1
-
-    -- anchor
-    self.ax = options.ax or 0.5
-    self.ay = options.ay or 0.5
+    self.scaleX = options.scaleX or 1
+    self.scaleY = options.scaleY or 1
 
     -- graphics
     self.color = options.color or {255, 255, 255, 255}
@@ -38,14 +44,11 @@ function Node:new(options)
     -- visibility
     self.visible = options.visible or true
 
-    -- root of node tree
-    self.root = nil
-
     -- signals
     self.signalCallbacks = {}
 
     -- transform
-    self.transform = love.math.newTransform(self.x, self.y, self.r, self.sx, self.sy)
+    self.transform = love.math.newTransform(self.x, self.y, self.r, self.scaleX, self.scaleY)
     self.dirty = self.DIRTY_NONE
 
 end
@@ -54,6 +57,8 @@ end
 -- Load
 
 function Node:load()
+
+    self.dirty = self.DIRTY_ALL
 
     if self.onLoad ~= nil then
         self:onLoad()
@@ -68,10 +73,33 @@ function Node:load()
 end
 
 -----------------------------------------------------------
+-- Event
+
+function Node:event(evt, ...)
+
+    if self.onEvent ~= nil then
+        self:onEvent(evt, ...)
+    end
+
+    if self.children ~= nil then
+        for i = 1, #self.children do
+            self.children[i]:event(evt, ...)
+        end
+    end
+
+end
+
+-----------------------------------------------------------
 -- Update
 
 function Node:update(dt)
 
+    -- recalculate height and width if dirty
+    -- if self.parent ~= nil and self.dirty ~= Node.DIRTY_NONE then
+    --     self.w = math.max(self.w, self.parent.w * self.anchorRight)
+    --     self.h = math.max(self.h, self.parent.h * self.anchorBottom)
+    -- end
+      
     if self.onUpdate ~= nil then
         self:onUpdate(dt)
     end
@@ -101,7 +129,7 @@ function Node:draw()
 
     -- transform if needed
     if self.dirty ~= self.DIRTY_NONE then
-        self:updateTransform()
+        self:updateTransform(self.dirty == Node.DIRTY_ALL)
     end
 
     love.graphics.push()
@@ -127,13 +155,18 @@ end
 
 function Node:addChild(node, index)
     
-    -- node has a parent
+    -- remove node from existing parent
     if node.parent ~= nil then
         node.parent:removeChild(node)
     end
 
+    -- add parent
+    node.parent = self    
+
+    -- set root
     node.root = self.root or self
 
+    -- keep track of children
     self.children = self.children or {}
 
     -- insert child at position or end
@@ -153,7 +186,11 @@ function Node:addChild(node, index)
         node.indexInParent = #self.children
     end
 
-    node.parent = self
+    -- callbback
+    if self.onChildAdded then
+        self:onChildAdded(node)
+    end
+    
 end
 
 function Node:removeChild(node)
@@ -172,6 +209,11 @@ function Node:removeChild(node)
     
     node.parent = nil
     node.indexInParent = nil
+
+    if self.onChildRemoved then
+        self:onChildRemoved(node)
+    end
+
 end
 
 function Node:reorderChild(node, index)
@@ -239,19 +281,16 @@ function Node:setPosition(x, y)
 end
 
 function Node:translatePosition(x, y)
-    self.x = self.x + x
-    self.y = self.y + y
-    self.dirty = self.DIRTY_ALL
+    self:setPosition(self.x + x, self.y + y)
 end
 
 function Node:setRotation(rotation)
-    self.r = rotation
+    self.rotation = rotation
     self.dirty = self.DIRTY_ME
 end
 
 function Node:translateRotation(rotation)
-    self.r = self.r + rotation
-    self.dirty = self.DIRTY_ME
+    self:setRotation(self.rotation + rotation)
 end
 
 function Node:setSize(w, h)
@@ -260,56 +299,58 @@ function Node:setSize(w, h)
     self.dirty = self.DIRTY_ALL
 end
 
-function Node:setScale(sx, sy)
-    self.sx = sx
-    self.sy = sy
+function Node:translateSize(w, h)
+    self:setSize(self.w + w, self.h)
+end
+
+function Node:setScale(scaleX, scaleY)
+    self.scaleX = scaleX
+    self.scaleY = scaleY
     self.dirty = self.DIRTY_ME
 end
 
-function Node:translateScale(sx, sy)
-    self.sx = self.sx + sx
-    self.sy = self.sy + sy
-    self.dirty = self.DIRTY_ME
+function Node:translateScale(scaleX, scaleY)
+    self:setScale(self.scaleX + scaleX, self.scaleY + scaleY)
 end
 
-function Node:setAnchor(ax, ay)
-    self.ax = ax
-    self.ay = ay
+function Node:setAnchor(anchorY, anchorX, anchorBottom, anchorRight)
+    self.anchorX = anchorX
+    self.anchorY = anchorY
     self.dirty = self.DIRTY_ALL
 end
 
 function Node:getLeftTop()
-    return -self.w * self.ax, -self.h * self.ay
+    return -self.w * self.anchorX, -self.h * self.anchorY
 end
 
-function Node:updateTransform()
+function Node:updateTransform(needPropagation)
 
     local x = self.x
     local y = self.y
     
     if self.parent ~= nil then
         local p = self.parent
-        x = x - p.w * p.ax
-        y = y - p.h * p.ay
+        x = x - p.w * p.anchorX
+        y = y - p.h * p.anchorY
     end
     
-    self.transform:setTransformation(x, y, self.r, self.sx, self.sy)
+    self.transform:setTransformation(x, y, self.rotation, self.scaleX, self.scaleY)
     self.finalTransform = nil
+    self.dirty = Node.DIRTY_NONE
 
     -- is this needed?
-    -- if self.dirty == self.DIRTY_ALL and self.children ~= nil then
-    --     for i = 1, #self.children do
-    --         self.children[i]:updateTransform()
-    --     end
-    -- end
-
-    self.dirty = self.DIRTY_NONE
+    if needPropagation and self.children ~= nil then
+        for i = 1, #self.children do
+            self.children[i]:updateTransform(needPropagation)
+        end
+    end
+    
 end
 
-function Node:containsPoint(x, y)
+function Node:containsPoint(px, py)
 
     -- transform
-    local finalTransform = (self.dirty == 0 and self.finalTransform) or nil
+    local finalTransform = (self.dirty == Node.DIRTY_NONE and self.finalTransform) or nil
 
     if finalTransform == nil then
         local nodes = { self }
@@ -326,33 +367,14 @@ function Node:containsPoint(x, y)
     end
 
     -- calculate box with global coordinates
-    local x1, y1 = finalTransform:transformPoint(-self.w * self.ax, -self.h * self.ay)
-    local x2, y2 = finalTransform:transformPoint(self.w * (1 - self.ax), self.h * (1 - self.ay))
+    local x1, y1 = finalTransform:transformPoint(-self.w * self.anchorX, -self.h * self.anchorY)
+    local x2, y2 = finalTransform:transformPoint(self.w * (1 - self.anchorX), self.h * (1 - self.anchorY))
+
+    -- fix rotation transform
+    local gx, gy = px, py
+
     return gx >= x1 and gx <= x2 and gy >= y1 and gy <= y2
 end
-
-function Node:checkMousePressed(x, y)
-    if self:containsPoint(x, y) then
-        if self.onMousePressed then
-            self:onMousePressed(x, y)
-            return true
-        end
-    end
-    return false
-end
-
-function Node:checkMouseReleased(x, y)
-    if self.onMouseReleased then
-        self:onMouseReleased(x, y)
-        return true
-    end
-    return false
-end
-
------------------------------------------------------------
--- 
-
-
 
 -----------------------------------------------------------
 -- End
