@@ -49,24 +49,22 @@ function Node:new(options)
 
     -- transform
     self.transform = love.math.newTransform(self.x, self.y, self.r, self.scaleX, self.scaleY)
-    self.dirty = self.DIRTY_NONE
+    self.dirty = self.DIRTY_ME
 
 end
 
 -----------------------------------------------------------
--- Load
+-- Input Events
 
-function Node:load()
+function Node:input(evt)
 
-    self.dirty = self.DIRTY_ALL
-
-    if self.onLoad ~= nil then
-        self:onLoad()
+    if self.onInput then
+        self:onInput(evt)
     end
 
-    if self.children ~= nil then
+    if self.children then
         for i = 1, #self.children do
-            self.children[i]:load()
+            self.children[i]:input(evt)
         end
     end
 
@@ -154,6 +152,10 @@ end
 -- Children
 
 function Node:addChild(node, index)
+
+    if node == nil then
+        error('can not add empty node to tree')
+    end
     
     -- remove node from existing parent
     if node.parent ~= nil then
@@ -168,6 +170,11 @@ function Node:addChild(node, index)
 
     -- keep track of children
     self.children = self.children or {}
+
+    -- node has entered the scene graph
+    if node.onTreeEntered then
+        node:onTreeEntered()
+    end    
 
     -- insert child at position or end
     if index ~= nil and type(index) == 'number' then
@@ -186,10 +193,15 @@ function Node:addChild(node, index)
         node.indexInParent = #self.children
     end
 
-    -- callbback
+    -- node is ready
+    if node.onActive then
+        node:onActive()
+    end  
+    
+    -- this node has a new child
     if self.onChildAdded then
         self:onChildAdded(node)
-    end
+    end    
     
 end
 
@@ -214,6 +226,13 @@ function Node:removeChild(node)
         self:onChildRemoved(node)
     end
 
+    if node.onTreeExited ~= nil then
+        node:onTreeExited()
+    end
+
+end
+
+function Node:onTreeExited()
 end
 
 function Node:reorderChild(node, index)

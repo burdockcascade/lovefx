@@ -37,45 +37,44 @@ function Button:new(args)
     self.tip = args.tip or ""
 
     -- flags
-    self.parentalControl = false
-    self.expandWidth = args.expandWidth or false
+    self.expandWidth = args.expandWidth or 0
+    self.expandHeight = args.expandHeight or 0
 
-    args.w = args.w or self.text:getWidth() + self.p*2
-    args.h = args.h or self.text:getHeight() + self.p*2
+    self.minWidth = args.minWidth or self.text:getWidth() + self.p*2
+    self.minHeight = args.minHeight or self.text:getHeight() + self.p*2
+
+    self.textHeight = self.text:getHeight()
+    self.textWidth = self.text:getWidth()
 
     Button.super.new(self, args)
 end
 
-function Button:onLoad()
+function Button:onInput(evt)
+
+    if evt.name == "mouse-pressed" and self:containsPoint(love.mouse.getPosition()) then
+        self:activateStyle('click')   
+    end
+    
+    if evt.name == "mouse-released" and self:containsPoint(love.mouse.getPosition())  then
+        self:fireSignal('pressed')
+        self:activateStyle('hover')  
+    end
 
 end
 
 function Button:onUpdate()
 
-    local x, y = love.mouse.getPosition()
-
-    if self:containsPoint(x, y) then
-
-        if self.mouseEntered then
-            if love.mouse.isDown(1) then
-                self:activateStyle('click')
-                self:fireSignal('pressed')
-            else
-                self:activateStyle('hover')
-            end
-        else
-            self.mouseEntered = true
+    if self:containsPoint(love.mouse.getPosition()) then
+        if not self.mouseEntered then
             self:fireSignal('mouse-enter')
+            self:activateStyle('hover')    
+            self.mouseEntered = true
         end
-
     else
-
-        self:activateStyle('default')
-
         if self.mouseEntered then
-            self.mouseEntered = false
             self:fireSignal('mouse-exit')
-            
+            self:activateStyle('default')    
+            self.mouseEntered = false
         end
     end
 
@@ -105,7 +104,7 @@ function Button:onDraw()
 
     -- text
     love.graphics.setColor(self.textColor)
-    love.graphics.draw(self.text, self.w/2 - self.text:getWidth()/2 , y0 + self.p)
+    love.graphics.draw(self.text, x0 + (self.w - self.textWidth)/2, y0 + (self.h - self.textHeight)/2)
 
 end
 

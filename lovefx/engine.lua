@@ -20,12 +20,13 @@ AnimatedSprite = require('lovefx.nodes.graphics.animated_sprite')
 
 -- ui
 Canvas = require('lovefx.nodes.ui.canvas')
-Frame = require('lovefx.nodes.ui.frame')
-Label = require('lovefx.nodes.ui.label')
-Button = require('lovefx.nodes.ui.button')
+Panel = require('lovefx.nodes.ui.panel')
+Label = require('lovefx.nodes.ui.form.label')
+Button = require('lovefx.nodes.ui.form.button')
 Container = require('lovefx.nodes.ui.containers.container')
 HBox = require('lovefx.nodes.ui.containers.hbox')
 VBox = require('lovefx.nodes.ui.containers.vbox')
+InputBox = require('lovefx.nodes.ui.form.inputbox')
 
 -- util
 Color = require('lovefx.util.color')
@@ -43,27 +44,60 @@ AudioPlayer = require('lovefx.nodes.multimedia.audio_player')
 Resources = {}
 
 
+-----------------------------------------------------------
+-- App
+
 -- Base App
 App = Node:extend()
-
-app = App()
 
 function App:new()
     
     self.scene = Node()
     self:addChild(self.scene)
 
+    self.canvas = Canvas()
+    self:addChild(self.canvas)
+    
+
     App.super.new(self)
 
 end
 
+-----------------------------------------------------------
+-- Enigne Loop
+
+app = nil
+
 function love.load()
-    app:load()
+    app = App()    
+    app:onActive()
 end
 
 function love.update(dt)
     app:update(dt)
 end
+
+-----------------------------------------------------------
+-- Inputs
+
+function love.mousepressed(x, y, button, istouch, presses)
+    app:input({name = "mouse-pressed", x = x, y = y, button = button, istouch = istouch, presses})
+end
+
+function love.mousereleased(x, y, button, istouch, presses)
+    app:input({name = "mouse-released", x = x, y = y, button = button, istouch = istouch, presses})
+end
+
+function love.keypressed(key, scancode, isrepeat)
+    app:input({name = "key-pressed", key = key, scancode = scancode, isrepeat = isrepeat})
+end
+
+function love.textinput(text)
+    app:input({name = "textinput", text = text})
+end
+
+-----------------------------------------------------------
+-- Draw
 
 function love.draw()
     app:draw()

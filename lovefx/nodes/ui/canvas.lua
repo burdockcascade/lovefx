@@ -12,31 +12,30 @@ end
 
 function Canvas:onUpdate(dt)
 
+    -- dont waste cpu
+    if self.w == love.graphics.getWidth() and self.h == love.graphics.getHeight() then
+        return
+    end
+
+    -- set size based on window size
     self.w = love.graphics.getWidth()
     self.h = love.graphics.getHeight()
 
-    -- -- set x pps for each child
-    -- if self.children ~= nil then    
-    --     for i = 1, #self.children do
+    -- set each child
+    if self.children ~= nil then    
+        for i = 1, #self.children do
 
-    --         -- find node
-    --         local node = self.children[i]
+            -- find node
+            local node = self.children[i]
 
-    --         -- set horizontal position
-    --         node:setPosition(nextX, node.y)
+            -- force anchor
+            node:setAnchor(0, 0)
 
-    --         -- set next x pos
-    --         nextX = nextX + node.w + 1
+            -- expand node
+            node:setSize(self.w * node.expandWidth, self.h * node.expandHeight)
 
-    --         if i ~= #self.children then
-    --             nextX = nextX + self.spacing
-    --         end
-
-    --         -- expand self
-    --         self.w = math.max(self.x, node.x)
-
-    --     end
-    -- end    
+        end
+    end  
 
 end
 

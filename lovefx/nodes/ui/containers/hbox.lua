@@ -2,45 +2,59 @@ local Node = require 'lovefx.nodes.node'
 local HBox = Node:extend()
 
 function HBox:new(options)
+
+    options = options or {}
+
     HBox.super.new(self, options)
+
+    self.expandWidth = options.expandWidth or 1
+    self.expandHeight = options.expandHeight or 1
+
+    self.minWidth = options.minWidth or 0
+    self.minHeight = options.minHeight or 0
 
     self.spacing = options.spacing or 0
 
 end
 
-function HBox:onChildAdded(node)
-    node:setAnchor(0, 0)
-end
-
 function HBox:onUpdate()
 
-    -- dont waste cpu
-    if self.dirty == Node.DIRTY_NONE then
-        return
-    end
+    -- set x pos
+    if self.children ~= nil and self.dirty ~= Node.DIRTY_NONE then    
 
-    local nextX = 0
+        local totalRatioWidth = 0
 
-    if self.children ~= nil then    
+        for i = 1, #self.children do
+            totalRatioWidth = totalRatioWidth + self.children[i].expandWidth
+        end
+
+        local ratioOne = self.w / totalRatioWidth
+        local nextX = 0
+
         for i = 1, #self.children do
 
             -- find node
             local node = self.children[i]
 
+            -- force anchor
+            node:setAnchor(0, 0)
+
             -- set horizontal position
             node:setPosition(nextX, node.y)
 
-            -- set next x pos
-            nextX = nextX + node.w + 1
+            -- set child size
+            node:setSize(math.max(ratioOne * node.expandWidth, node.minWidth), math.max(self.h * node.expandHeight, node.minHeight)) 
 
+            -- set next x pos
+            nextX = nextX + node.w
+
+            -- no space after last child
             if i ~= #self.children then
                 nextX = nextX + self.spacing
             end
 
-            -- expand self
-            self.w = math.max(self.x, node.x)
-
         end
+
     end
 
 end

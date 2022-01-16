@@ -10,9 +10,7 @@ function PhysicsWorld:new(options)
     self.can_sleep = options.can_sleep or true
 
     PhysicsWorld.super.new(self, options)
-end
 
-function PhysicsWorld:onLoad()
     self.physicsWorld = love.physics.newWorld(self.gx, self.gy, self.can_sleep)
 end
 
